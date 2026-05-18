@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan TI – Perpustakaan Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050A14;
+    --surface: #0D1626;
+    --card: #111D33;
+    --accent1: #00D9FF;
+    --accent2: #7C3AED;
+    --accent3: #F59E0B;
+    --text: #E8EDF5;
+    --muted: #6B7DA8;
+    --border: rgba(0,217,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── SLIDE SYSTEM ── */
+  #deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 60px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease, transform .5s cubic-bezier(.4,0,.2,1);
+    transform: translateX(60px);
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+  }
+  .slide.exit {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* ── NAVIGATION ── */
+  #nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    z-index: 100;
+    background: rgba(13,22,38,.85);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    backdrop-filter: blur(12px);
+  }
+  .nav-btn {
+    width: 40px; height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;align-items:center;justify-content:center;
+    transition: all .2s;
+  }
+  .nav-btn:hover { background: var(--accent1); color: var(--bg); border-color: var(--accent1); }
+  #slide-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 52px;
+    text-align: center;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 3px;
+    background: var(--muted);
+    transition: all .3s;
+    cursor: pointer;
+  }
+  .dot.on { background: var(--accent1); width: 18px; }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent1));
+    transition: width .4s ease;
+    z-index: 200;
+  }
+
+  /* ── SLIDE LABEL ── */
+  .slide-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent1);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: .7;
+  }
+
+  /* ══════════════════════════════
+     SLIDE 1 – COVER
+  ══════════════════════════════ */
+  #s1 {
+    background:
+      radial-gradient(ellipse 80% 60% at 30% 40%, rgba(124,58,237,.2) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 80% 70%, rgba(0,217,255,.15) 0%, transparent 60%),
+      var(--bg);
+    text-align: center;
+  }
+  #s1 .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,217,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,217,255,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  #s1 .badge {
+    display: inline-block;
+    background: rgba(124,58,237,.25);
+    border: 1px solid rgba(124,58,237,.5);
+    color: #C4B5FD;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  #s1 h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 68px);
+    font-weight: 900;
+    line-height: 1.05;
+    background: linear-gradient(135deg, #fff 30%, var(--accent1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  #s1 .sub {
+    font-size: 18px;
+    color: var(--muted);
+    margin-bottom: 36px;
+    letter-spacing: .5px;
+  }
+  #s1 .meta-row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  #s1 .meta-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  #s1 .meta-label { font-size: 11px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
+  #s1 .meta-value { font-size: 14px; font-weight: 500; color: var(--text); }
+  #s1 .line {
+    width: 1px; height: 40px;
+    background: var(--border);
+    align-self: center;
+  }
+  .floating-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    animation: drift 8s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(20px, -20px) scale(1.05); }
+  }
+
+  /* ══════════════════════════════
+     SLIDE 2 – DATA PYRAMID
+  ══════════════════════════════ */
+  #s2 {
+    background:
+      radial-gradient(ellipse 50% 60% at 70% 30%, rgba(0,217,255,.1) 0%, transparent 60%),
+      var(--bg);
+  }
+  #s2 .slide-inner {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  #s2 .left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  #s2 .left p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  /* Pyramid */
+  .pyramid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+  .pyr-tier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: transform .25s, filter .25s;
+    position: relative;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pyr-tier:hover { transform: scale(1.04); filter: brightness(1.15); }
+  .pyr-tier .tier-name { font-weight: 700; font-size: 15px; letter-spacing: .5px; }
+  .pyr-tier .tier-desc { font-size: 11px; opacity: .8; }
+  .pyr-d  { width: 240px; background: linear-gradient(135deg,#1e3a5f,#0e2a47); border: 1px solid rgba(0,217,255,.3); }
+  .pyr-i  { width: 300px; background: linear-gradient(135deg,#1a3353,#0d2243); border: 1px solid rgba(0,217,255,.25); }
+  .pyr-k  { width: 360px; background: linear-gradient(135deg,#162d4a,#0b1d35); border: 1px solid rgba(0,217,255,.2); }
+  .pyr-w  { width: 420px; background: linear-gradient(135deg,#122540,#090f1e); border: 1px solid rgba(0,217,255,.15); }
+
+  /* ══════════════════════════════
+     SLIDE 3-6 – Content slides
+  ══════════════════════════════ */
+  .content-slide {
+    background: var(--bg);
+  }
+  .content-slide .inner {
+    width: 100%;
+    max-width: 900px;
+  }
+  .content-slide h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 3vw, 42px);
+    margin-bottom: 8px;
+    background: linear-gradient(120deg, #fff 60%, var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .content-slide .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent1), transparent);
+    margin-bottom: 28px;
+    width: 120px;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,217,255,.05), transparent);
+    opacity: 0;
+    transition: opacity .25s;
+  }
+  .info-card:hover { transform: translateY(-4px); border-color: var(--accent1); box-shadow: 0 8px 30px rgba(0,217,255,.12); }
+  .info-card:hover::before { opacity: 1; }
+  .info-card .icon { font-size: 26px; margin-bottom: 10px; }
+  .info-card h3 { font-size: 14px; font-weight: 600; color: var(--accent1); margin-bottom: 6px; letter-spacing: .4px; }
+  .info-card p  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* Numbered list card */
+  .num-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    transition: transform .2s, border-color .2s;
+  }
+  .num-card:hover { transform: translateX(6px); border-color: var(--accent1); }
+  .num-circle {
+    width: 32px; height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    display: flex;align-items:center;justify-content:center;
+    font-family: 'JetBrains Mono',monospace;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .num-card p  { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  /* ── Tag chips ── */
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 3px 4px 3px 0;
+    border: 1px solid;
+  }
+  .tag-blue   { background: rgba(0,217,255,.1); border-color: rgba(0,217,255,.4); color: var(--accent1); }
+  .tag-purple { background: rgba(124,58,237,.15); border-color: rgba(124,58,237,.5); color: #C4B5FD; }
+  .tag-amber  { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.4); color: var(--accent3); }
+
+  /* ══════════════════════════════
+     SLIDE 7 – CLOSING
+  ══════════════════════════════ */
+  #s7 {
+    background:
+      radial-gradient(ellipse 70% 70% at 50% 50%, rgba(124,58,237,.2) 0%, transparent 65%),
+      var(--bg);
+    text-align: center;
+  }
+  #s7 h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff 40%, var(--accent2) 80%, var(--accent1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  #s7 p { color: var(--muted); font-size: 16px; max-width: 480px; line-height: 1.7; margin: 0 auto 36px; }
+  .author-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  .author-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent2), var(--accent1));
+    display: flex;align-items:center;justify-content:center;
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .anim { animation: fadeUp .5s ease both; }
+  .anim-d1 { animation-delay: .1s; }
+  .anim-d2 { animation-delay: .2s; }
+  .anim-d3 { animation-delay: .3s; }
+  .anim-d4 { animation-delay: .4s; }
+  .anim-d5 { animation-delay: .5s; }
+
+  /* Keyboard hint */
+  #key-hint {
+    position: fixed;
+    top: 20px; right: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex; gap: 6px; align-items: center;
+  }
+  .kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="key-hint">
+  <span class="kbd">←</span><span class="kbd">→</span> navigate
+</div>
+
+<div id="deck">
+
+  <!-- ══ SLIDE 1: COVER ══ -->
+  <div class="slide" id="s1">
+    <div class="grid-bg"></div>
+    <div class="floating-orb" style="width:300px;height:300px;background:rgba(124,58,237,.15);top:-50px;left:-80px;animation-duration:10s;"></div>
+    <div class="floating-orb" style="width:200px;height:200px;background:rgba(0,217,255,.1);bottom:60px;right:80px;animation-duration:7s;animation-direction:alternate-reverse;"></div>
+
+    <div class="badge anim">POLITEKNIK NEGERI MADIUN · 2026</div>
+    <h1 class="anim anim-d1">Teknologi<br>Informasi</h1>
+    <p class="sub anim anim-d2">Studi Kasus Perpustakaan Digital &amp; Arsitektur Jaringan</p>
+    <div class="meta-row anim anim-d3">
+      <div class="meta-item">
+        <span class="meta-label">Mata Kuliah</span>
+        <span class="meta-value">Teknologi Informasi</span>
+      </div>
+      <div class="line"></div>
+      <div class="meta-item">
+        <span class="meta-label">Mahasiswa</span>
+        <span class="meta-value">Indah Ayu Astuti</span>
+         <span class="meta-value">Leo Rhamanata Adrio</span>
+      </div>
+      
+      <div class="line"></div>
+      <div class="meta-item">
+        <span class="meta-label">NIM</span>
+        <span class="meta-value">254311002</span>
+         <span class="meta-value">254311012</span>
+      </div>
+      <div class="line"></div>
+      <div class="meta-item">
+        <span class="meta-label">Kelas</span>
+        <span class="meta-value">2-A</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2: DIKW PYRAMID ══ -->
+  <div class="slide content-slide" id="s2">
+    <div class="slide-inner">
+      <div class="left">
+        <span class="slide-label anim">Kerangka Teori</span>
+        <h2 class="anim anim-d1">Hierarki<br>DIKW</h2>
+        <div class="divider anim anim-d2"></div>
+        <p class="anim anim-d3">Model DIKW menggambarkan transformasi <strong style="color:var(--text)">Data → Informasi → Knowledge → Wisdom</strong> yang diterapkan dalam sistem perpustakaan digital kampus.</p>
+        <br>
+        <p class="anim anim-d4" style="font-size:13px">Klik setiap lapisan untuk melihat detail →</p>
+      </div>
+      <div class="right anim anim-d2">
+        <div class="pyramid">
+          <div class="pyr-tier pyr-d" onclick="showPyrDetail('d')">
+            <span class="tier-name" style="color:#00D9FF">WISDOM</span>
+            <span class="tier-desc">Keputusan Strategis</span>
+          </div>
+          <div class="pyr-tier pyr-i" onclick="showPyrDetail('i')">
+            <span class="tier-name" style="color:#60a5fa">KNOWLEDGE</span>
+            <span class="tier-desc">Pola &amp; Tren</span>
+          </div>
+          <div class="pyr-tier pyr-k" onclick="showPyrDetail('k')">
+            <span class="tier-name" style="color:#a78bfa">INFORMASI</span>
+            <span class="tier-desc">Data Diproses</span>
+          </div>
+          <div class="pyr-tier pyr-w" onclick="showPyrDetail('w')">
+            <span class="tier-name" style="color:#c4b5fd">DATA</span>
+            <span class="tier-desc">Fakta Mentah</span>
+          </div>
+        </div>
+        <div id="pyr-detail" style="margin-top:16px;min-height:54px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 3: DATA ══ -->
+  <div class="slide content-slide" id="s3">
+    <div class="inner">
+      <span class="slide-label anim">Lapisan 1</span>
+      <h2 class="anim anim-d1">Data <span style="-webkit-text-fill-color:var(--accent1)">—</span> Fakta Mentah</h2>
+      <div class="divider anim anim-d2"></div>
+      <div class="card-grid">
+        <div class="info-card anim anim-d2">
+          <div class="icon">🪪</div>
+          <h3>ID Anggota</h3>
+          <p>NIM <strong style="color:var(--text);font-family:'JetBrains Mono',monospace">254311002</strong> terdaftar sebagai anggota aktif perpustakaan.</p>
+        </div>
+        <div class="info-card anim anim-d3">
+          <div class="icon">📚</div>
+          <h3>Kode Buku</h3>
+          <p>ISBN <strong style="color:var(--text);font-family:'JetBrains Mono',monospace">978-602-03</strong> untuk kategori Pemrograman Python.</p>
+        </div>
+        <div class="info-card anim anim-d3">
+          <div class="icon">📅</div>
+          <h3>Tanggal Pinjam</h3>
+          <p>Dipinjam pada <strong style="color:var(--text)">2026-04-10</strong> dengan durasi <strong style="color:var(--text)">7 hari</strong>.</p>
+        </div>
+        <div class="info-card anim anim-d4">
+          <div class="icon">🔖</div>
+          <h3>Status Buku</h3>
+          <p>Status tercatat sebagai <span class="tag tag-blue">Tersedia</span> atau <span class="tag tag-amber">Dipinjam</span>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4: INFORMASI ══ -->
+  <div class="slide content-slide" id="s4">
+    <div class="inner">
+      <span class="slide-label anim">Lapisan 2</span>
+      <h2 class="anim anim-d1">Informasi <span style="-webkit-text-fill-color:var(--accent1)">—</span> Data Diproses</h2>
+      <div class="divider anim anim-d2"></div>
+      <div class="card-grid">
+        <div class="info-card anim anim-d2">
+          <div class="icon">⏰</div>
+          <h3>Keterlambatan</h3>
+          <p>Mahasiswa NIM 254311002 belum mengembalikan buku selama <strong style="color:#F87171">10 hari</strong> melewati batas waktu.</p>
+        </div>
+        <div class="info-card anim anim-d3">
+          <div class="icon">🔥</div>
+          <h3>Popularitas Buku</h3>
+          <p>"Belajar Flask" telah dipinjam <strong style="color:var(--accent3)">45 kali</strong> dalam satu bulan — buku paling populer.</p>
+        </div>
+        <div class="info-card anim anim-d3">
+          <div class="icon">📊</div>
+          <h3>Stok Kategori</h3>
+          <p>Teknologi tersisa <strong style="color:#F87171">15%</strong> · Sastra masih <strong style="color:#4ADE80">90%</strong> di rak koleksi.</p>
+        </div>
+        <div class="info-card anim anim-d4">
+          <div class="icon">🕐</div>
+          <h3>Waiting List</h3>
+          <p><strong style="color:var(--accent1)">5 mahasiswa</strong> antri untuk buku "Clean Code" yang sedang habis dipinjam.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 5: KNOWLEDGE + WISDOM ══ -->
+  <div class="slide content-slide" id="s5">
+    <div class="inner">
+      <span class="slide-label anim">Lapisan 3 &amp; 4</span>
+      <h2 class="anim anim-d1">Knowledge &amp; Wisdom</h2>
+      <div class="divider anim anim-d2"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div>
+          <p style="font-size:12px;color:var(--accent1);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-family:'JetBrains Mono',monospace" class="anim anim-d2">● Knowledge</p>
+          <div class="num-card anim anim-d3">
+            <div class="num-circle" style="background:rgba(0,217,255,.15);color:var(--accent1)">01</div>
+            <div><h3>Tren Musiman</h3><p>Tingkat akhir paling banyak cari buku metode penelitian di Maret–Mei.</p></div>
+          </div>
+          <div class="num-card anim anim-d4">
+            <div class="num-circle" style="background:rgba(0,217,255,.15);color:var(--accent1)">02</div>
+            <div><h3>Pola Perilaku</h3><p>Mahasiswa cenderung lupa mengembalikan buku saat jatuh tempo hari libur/akhir pekan.</p></div>
+          </div>
+          <div class="num-card anim anim-d5">
+            <div class="num-circle" style="background:rgba(0,217,255,.15);color:var(--accent1)">03</div>
+            <div><h3>Efektivitas Koleksi</h3><p>Buku IT terbitan &gt;10 tahun jarang dipinjam karena dianggap sudah usang.</p></div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:12px;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-family:'JetBrains Mono',monospace" class="anim anim-d2">● Wisdom</p>
+          <div class="num-card anim anim-d3">
+            <div class="num-circle" style="background:rgba(124,58,237,.2);color:#C4B5FD">01</div>
+            <div><h3>Digitalisasi Koleksi</h3><p>Alihkan anggaran ke E-Journal / E-Book agar selalu up-to-date.</p></div>
+          </div>
+          <div class="num-card anim anim-d4">
+            <div class="num-circle" style="background:rgba(124,58,237,.2);color:#C4B5FD">02</div>
+            <div><h3>Sistem Reminder</h3><p>Kirim notifikasi WhatsApp otomatis 1 hari sebelum jatuh tempo.</p></div>
+          </div>
+          <div class="num-card anim anim-d5">
+            <div class="num-circle" style="background:rgba(124,58,237,.2);color:#C4B5FD">03</div>
+            <div><h3>Booking Mandiri</h3><p>Sistem booking via aplikasi untuk buku populer agar antrian tertib.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 6: ARSITEKTUR JARINGAN ══ -->
+  <div class="slide content-slide" id="s6">
+    <div class="inner">
+      <span class="slide-label anim">Diskusi Kelas</span>
+      <h2 class="anim anim-d1">Arsitektur Jaringan</h2>
+      <div class="divider anim anim-d2"></div>
+      <div class="card-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="info-card anim anim-d2" style="border-color:rgba(0,217,255,.3)">
+          <div class="icon">🏛️</div>
+          <h3>Sistem Akademik Kampus</h3>
+          <p style="margin-bottom:10px">Three-Tier Architecture — pemisahan Presentation, Business Logic &amp; Data Layer untuk keamanan dan skalabilitas.</p>
+          <span class="tag tag-blue">LAN/WAN</span>
+          <span class="tag tag-blue">3-Tier</span>
+        </div>
+        <div class="info-card anim anim-d3" style="border-color:rgba(124,58,237,.4)">
+          <div class="icon">☁️</div>
+          <h3>Startup E-Commerce</h3>
+          <p style="margin-bottom:10px">Microservices + Cloud-Based Architecture (AWS/GCP). Layanan keranjang, pembayaran, stok — terhubung via API.</p>
+          <span class="tag tag-purple">PaaS/IaaS</span>
+          <span class="tag tag-purple">Microservices</span>
+        </div>
+        <div class="info-card anim anim-d4" style="border-color:rgba(245,158,11,.35)">
+          <div class="icon">🏦</div>
+          <h3>Sistem Perbankan</h3>
+          <p style="margin-bottom:10px">Client-Server terpusat. P2P tidak cocok karena butuh kontrol terpusat, Single Source of Truth &amp; keamanan data finansial.</p>
+          <span class="tag tag-amber">Client-Server</span>
+          <span class="tag tag-amber">No P2P</span>
+        </div>
+      </div>
+      <div class="anim anim-d5" style="margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;gap:12px;align-items:flex-start">
+        <span style="font-size:20px">💡</span>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7">Pemilihan arsitektur jaringan sangat bergantung pada kebutuhan <strong style="color:var(--text)">keamanan</strong>, <strong style="color:var(--text)">skalabilitas</strong>, dan <strong style="color:var(--text)">efisiensi operasional</strong> dari masing-masing sistem yang dibangun.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 7: CLOSING ══ -->
+  <div class="slide" id="s7">
+    <div class="floating-orb" style="width:400px;height:400px;background:rgba(124,58,237,.15);top:50%;left:50%;transform:translate(-50%,-50%);animation-duration:12s;"></div>
+    <span class="slide-label anim">Terima Kasih</span>
+    <h2 class="anim anim-d1">Kesimpulan &amp;<br>Penutup</h2>
+    <p class="anim anim-d2">Transformasi data menjadi kebijakan yang tepat membutuhkan kerangka DIKW yang solid, didukung arsitektur sistem yang sesuai dengan skala dan kebutuhan keamanan.</p>
+    <div class="author-pill anim anim-d3">
+      <div class="author-avatar">IA</div>
+      <div>
+        <div style="font-weight:600;font-size:14px">Indah Ayu Astuti</div>
+        <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">254311002 · Kelas 2-A · TRPL</div>
+      </div>
+    </div>
+    <br>
+    <div class="author-pill anim anim-d3">
+      <div class="author-avatar">LR</div>
+       <div>
+        <div style="font-weight:600;font-size:14px">Leo Rhamanata Adrio</div>
+        <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">254311012 · Kelas 2-A · TRPL</div>
+      </div>
+    </div>
+    <div class="anim anim-d4" style="margin-top:24px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace">
+      Dosen: Tri Lestariningsih, S.Kom., M.Kom.
+    </div>
+  </div>
+
+</div><!-- #deck -->
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nav-btn" onclick="prev()">&#8592;</button>
+  <div id="dots"></div>
+  <span id="slide-counter">1 / 7</span>
+  <button class="nav-btn" onclick="next()">&#8594;</button>
+</div>
+
+<script>
+  const TOTAL = 7;
+  let cur = 0;
+  let busy = false;
+
+  // Build dots
+  const dotsEl = document.getElementById('dots');
+  for(let i=0;i<TOTAL;i++){
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.onclick = ()=>goTo(i);
+    dotsEl.appendChild(d);
+  }
+
+  function updateUI(){
+    document.getElementById('slide-counter').textContent = `${cur+1} / ${TOTAL}`;
+    document.getElementById('progress-bar').style.width = `${((cur+1)/TOTAL)*100}%`;
+    const dots = dotsEl.querySelectorAll('.dot');
+    dots.forEach((d,i)=>d.classList.toggle('on', i===cur));
+  }
+
+  function goTo(n){
+    if(busy || n===cur || n<0 || n>=TOTAL) return;
+    busy = true;
+    const slides = document.querySelectorAll('.slide');
+    slides[cur].classList.add('exit');
+    slides[cur].classList.remove('active');
+    cur = n;
+    // Reset animation children
+    slides[cur].querySelectorAll('.anim').forEach(el=>{
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    });
+    setTimeout(()=>{
+      slides.forEach((s,i)=>{ s.classList.remove('exit'); });
+      slides[cur].classList.add('active');
+      updateUI();
+      busy = false;
+    }, 80);
+  }
+
+  function next(){ goTo(Math.min(cur+1,TOTAL-1)); }
+  function prev(){ goTo(Math.max(cur-1,0)); }
+
+  // Keyboard
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); next(); }
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); prev(); }
+  });
+
+  // Touch swipe
+  let tx=0;
+  document.addEventListener('touchstart', e=>tx=e.touches[0].clientX);
+  document.addEventListener('touchend', e=>{
+    const dx = tx - e.changedTouches[0].clientX;
+    if(Math.abs(dx)>40){ dx>0?next():prev(); }
+  });
+
+  // Pyramid detail
+  const pyrData = {
+    d: { color:'#00D9FF', title:'WISDOM', text:'Digitalisasi koleksi, sistem reminder WhatsApp, booking mandiri buku populer, pengadaan berbasis data musiman.' },
+    i: { color:'#60a5fa', title:'KNOWLEDGE', text:'Tren musiman mahasiswa tingkat akhir, pola kelupaan saat akhir pekan, buku IT lama jarang dipinjam.' },
+    k: { color:'#a78bfa', title:'INFORMASI', text:'10 hari keterlambatan, Flask dipinjam 45×/bulan, stok Teknologi 15%, 5 orang antri Clean Code.' },
+    w: { color:'#c4b5fd', title:'DATA', text:'ID 254311002 · ISBN 978-602-03 · Tanggal 2026-04-10 · Lama 7 hari · Kategori Pemrograman Python.' },
+  };
+  function showPyrDetail(k){
+    const d = pyrData[k];
+    const el = document.getElementById('pyr-detail');
+    el.innerHTML = `<div style="background:var(--card);border:1px solid ${d.color}44;border-radius:12px;padding:14px 16px;animation:fadeUp .3s ease both">
+      <p style="font-size:12px;color:${d.color};font-family:'JetBrains Mono',monospace;margin-bottom:6px;letter-spacing:1px">${d.title}</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">${d.text}</p>
+    </div>`;
+  }
+
+  // Init first slide
+  document.querySelectorAll('.slide')[0].classList.add('active');
+  updateUI();
+</script>
+</body>
+</html>
