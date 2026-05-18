@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laporan TI – Perpustakaan Digital</title>
+<title>Presentasi TI – Perpustakaan Digital</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -410,6 +410,142 @@
     display: flex; gap: 6px; align-items: center;
   }
   .kbd { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; }
+
+  /* ── FIX TOTAL RESPONSIVE & TERPOTONG PINGGIR ── */
+  @media (max-width: 576px) {
+    * {
+      box-sizing: border-box !important;
+    }
+
+    body {
+      overflow: hidden !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      user-select: auto !important; /* Mengembalikan interaksi normal layar */
+    }
+
+    #deck {
+      height: 100vh !important;
+      width: 100vw !important;
+      overflow: hidden !important;
+    }
+
+    /* Memastikan slide tidak meluber keluar pinggir HP */
+    .slide {
+      padding: 24px 16px 90px 16px !important; /* Jarak kiri-kanan dikecilkan jadi 16px */
+      justify-content: center !important; 
+      align-items: center !important;
+      height: 100vh !important;
+      width: 100vw !important;
+      max-width: 100% !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important; /* Kunci sumbu X agar tidak ada scroll ke samping */
+      display: flex !important;
+      flex-direction: column !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Pembungkus Konten Utama - DIJAMIN TIDAK POTONG */
+    .slide-inner, .inner {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important; /* Mencegah elemen flex meluber */
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Navigasi Bawah */
+    #nav {
+      position: fixed !important;
+      bottom: 16px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 90% !important;
+      max-width: 340px !important;
+      height: 50px !important;
+      padding: 0 12px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      box-sizing: border-box !important;
+    }
+
+    #dots {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 5px !important;
+      align-items: center !important;
+    }
+
+    .dot {
+      width: 5px !important;
+      height: 5px !important;
+    }
+    .dot.on {
+      width: 12px !important;
+    }
+
+    #slide-counter {
+      font-size: 11px !important;
+      min-width: unset !important;
+    }
+
+    .nav-btn {
+      width: 34px !important;
+      height: 34px !important;
+      font-size: 12px !important;
+    }
+
+    #key-hint {
+      display: none !important;
+    }
+
+    /* Perbaikan Judul Cover & Sub-judul */
+    #s1 h1 {
+      font-size: 30px !important; /* Sedikit dikecilkan agar teks panjang muat */
+    }
+    #s1 .sub {
+      font-size: 13px !important;
+    }
+    #s1 .meta-row {
+      flex-direction: column !important;
+      gap: 8px !important;
+    }
+
+    /* Perbaikan Khusus Bentuk Piramida di HP */
+    .pyramid {
+      width: 100% !important;
+      max-width: 260px !important;
+      margin: 0 auto !important;
+    }
+    .pyr-tier {
+      box-sizing: border-box !important;
+    }
+    .pyr-d { width: 100% !important; max-width: 160px !important; }
+    .pyr-i { width: 100% !important; max-width: 190px !important; }
+    .pyr-k { width: 100% !important; max-width: 220px !important; }
+    .pyr-w { width: 100% !important; max-width: 250px !important; }
+
+    /* Kartu Grid (Slide Isi) */
+    .card-grid {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+      width: 100% !important;
+    }
+    
+    .info-card {
+      padding: 12px 14px !important;
+      width: 100% !important;
+    }
+
+    #s5 .inner > div[style*="display:grid"] {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -501,7 +637,7 @@
         <div class="info-card anim anim-d2">
           <div class="icon">🪪</div>
           <h3>ID Anggota</h3>
-          <p>NIM <strong style="color:var(--text);font-family:'JetBrains Mono',monospace">254311002</strong> terdaftar sebagai anggota aktif perpustakaan.</p>
+          <p>NIM <strong style="color:var(--text);font-family:'JetBrains Mono',monospace">254311000</strong> terdaftar sebagai anggota aktif perpustakaan.</p>
         </div>
         <div class="info-card anim anim-d3">
           <div class="icon">📚</div>
@@ -532,7 +668,7 @@
         <div class="info-card anim anim-d2">
           <div class="icon">⏰</div>
           <h3>Keterlambatan</h3>
-          <p>Mahasiswa NIM 254311002 belum mengembalikan buku selama <strong style="color:#F87171">10 hari</strong> melewati batas waktu.</p>
+          <p>Mahasiswa NIM 254311000 belum mengembalikan buku selama <strong style="color:#F87171">10 hari</strong> melewati batas waktu.</p>
         </div>
         <div class="info-card anim anim-d3">
           <div class="icon">🔥</div>
